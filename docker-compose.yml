@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres_transacao
+    image: postgres
+    environment:
+      POSTGRES_DB: bantads-transacao
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5436:5432"
+    networks:
+      - transacao-network
+    restart: always
+
+  transacao:
+    build: .
+    image: bantads_transacao
+    restart: on-failure
+    container_name: bantads_transacao_container
+    command: docker run -p 8080:8080 bantads_transacao
+    volumes:
+      - .:/app
+      - static_data:/app/static
+    networks:
+      - transacao-network
+      - rabbitmq
+    ports:
+      - "8580:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres:
+  static_data:
+
+networks:
+  transacao-network:
+    external: false
+  rabbitmq:
+    external: true
