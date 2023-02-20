@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,17 +32,17 @@ public class TransacaoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transacaoService.save(transacaoModel));
     }
 
-    @GetMapping
+    @GetMapping("/{idCliente}/{dataInicial}/{dataFinal}")
     public ResponseEntity<?> getTransacaoById(
-            @RequestParam(value = "idCliente") String idCliente,
-            @RequestParam(value = "dataInicial") @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) Date dataInicial,
-            @RequestParam(value = "dataFinal") @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)  Date dataFinal
+            @PathVariable(value = "idCliente") UUID idCliente,
+            @PathVariable(value = "dataInicial") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataInicial,
+            @PathVariable(value = "dataFinal") @DateTimeFormat(pattern = "yyyy-MM-dd")  Date dataFinal
             ){
-        Optional<Object[]> transacaoModelOptional =
-                transacaoService.findAll(UUID.fromString(idCliente), dataInicial, dataFinal);
-        if (!transacaoModelOptional.isPresent()) {
+        List<TransacaoModel> transacaoModelList =
+                transacaoService.findAll(idCliente, dataInicial, dataFinal);
+        if (transacaoModelList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma transacão encontrada.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(transacaoModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body(transacaoModelList);
     }
 }

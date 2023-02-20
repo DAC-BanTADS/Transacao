@@ -6,7 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,7 +22,7 @@ public class TransacaoService {
         return transacaoRepository.save(transacaoModel);
     }
 
-    public Optional<Object[]> findAll(UUID idCliente, Date dataInicial, Date dataFinal) {
+    public List<TransacaoModel> findAll(UUID idCliente, Date dataInicial, Date dataFinal) {
         return transacaoRepository.findAll(idCliente, dataInicial, dataFinal);
     }
 }
