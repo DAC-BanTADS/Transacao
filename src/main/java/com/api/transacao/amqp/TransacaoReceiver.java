@@ -22,7 +22,7 @@ public class TransacaoReceiver {
     @RabbitHandler
     public TransacaoTransfer receive(@Payload TransacaoTransfer transacaoTransfer) {
         if (transacaoTransfer.getAction().equals("save-transacao")) {
-            if (Objects.isNull(transacaoTransfer.getTransacaoDto())) {
+            if (Objects.isNull(transacaoTransfer.getTransacaoDto().getIdCliente())) {
                 transacaoTransfer.setAction("failed-transacao");
                 transacaoTransfer.setMessage(("Nenhum dado de Transacao foi passado."));
                 return transacaoTransfer;
